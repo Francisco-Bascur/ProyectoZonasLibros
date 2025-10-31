@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 
-fun LoginScreen() {
+fun LoginScreen(onNavigateToRegister: () -> Unit) {
     var correo by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
 
@@ -94,7 +94,7 @@ fun LoginScreen() {
         Spacer(modifier = Modifier.height(24.dp))
 
         OutlinedButton(
-            onClick = { /* acción secundaria */ },
+            onClick = { onNavigateToRegister() },
 
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color(0xFF3949AB)
@@ -115,6 +115,6 @@ fun LoginScreen() {
 @Composable
 fun PreviewLoginScreen() {
     MaterialTheme {
-        LoginScreen()
+        LoginScreen(onNavigateToRegister = {})
     }
 }

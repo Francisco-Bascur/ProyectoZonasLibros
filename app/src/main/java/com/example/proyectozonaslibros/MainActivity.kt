@@ -3,8 +3,8 @@ package com.example.proyectozonaslibros
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.proyectozonaslibros.navigations.Navigation
 
-import com.example.proyectozonaslibros.ui.login.LoginScreen
 import com.example.proyectozonaslibros.ui.theme.ProyectoZonasLibrosTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ProyectoZonasLibrosTheme {  }
-                LoginScreen() // <-  se vizualiza  pantalla de login inicio session
+            Navigation() // <-  se vizualiza  pantalla de login inicio session() // <-  se vizualiza  pantalla de login inicio session
             }
         }
 
