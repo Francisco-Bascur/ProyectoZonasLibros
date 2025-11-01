@@ -1,42 +1,27 @@
 package com.example.proyectozonaslibros.ui.login
-
-
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import com.example.proyectozonaslibros.viewmodel.LoginViewModel
+
 
 @Composable
+fun LoginScreen(
+    onNavigateToRegister: () -> Unit,
+    loginViewModel: LoginViewModel = viewModel()
+) {
 
-fun LoginScreen(onNavigateToRegister: () -> Unit) {
-    var correo by remember { mutableStateOf("") }
-    var contrasena by remember { mutableStateOf("") }
-
+    // Diseño de fondo con degradado
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,75 +31,83 @@ fun LoginScreen(onNavigateToRegister: () -> Unit) {
                         Color(0xFF3949AB),
                         Color(0xFF5C6BC0),
                         Color(0xFFE8EAF6)
-
                     )
-
                 )
             )
-            .padding(32.dp), // espacio general para toda la pantalla
+            .padding(32.dp),
         verticalArrangement = Arrangement.Center
     ) {
+
+        // --- Título principal ---
         Text(
             text = "Iniciar sesión",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(24.dp) // <- espacio solo debajo del titulo
+                .padding(24.dp)
                 .fillMaxWidth(),
             textAlign = TextAlign.Center
         )
 
-        TextField(
-            value = correo,
-            onValueChange = { correo = it },
+        // --- Campo CORREO ---
+        OutlinedTextField(
+            value = loginViewModel.correo,
+            onValueChange = { loginViewModel.cambioCorreo(it) },
             label = { Text("Correo") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = loginViewModel.correo.isBlank()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextField(
-            value = contrasena,
-            onValueChange = { contrasena = it },
+        // --- Campo CONTRASEÑA ---
+        OutlinedTextField(
+            value = loginViewModel.clave,
+            onValueChange = { loginViewModel.cambioClave(it) },
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            isError = loginViewModel.clave.isBlank()
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        // --- Botón de INICIO DE SESIÓN ---
         Button(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth()
-        )
-        {
-            Text("iniciar sesion")
+            onClick = { loginViewModel.validarLogin() },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF3949AB)
+            )
+        ) {
+            Text("Iniciar sesión")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // --- Botón de REGISTRO ---
         OutlinedButton(
             onClick = { onNavigateToRegister() },
-
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = Color(0xFF3949AB)
             ),
-
             modifier = Modifier.fillMaxWidth()
-        )
-
-        {
+        ) {
             Text("Registrarse")
         }
-
     }
-}
 
-// Previsualización en Android Studio
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun PreviewLoginScreen() {
-    MaterialTheme {
-        LoginScreen(onNavigateToRegister = {})
+    // --- ALERTA (POPUP) ---
+    if (loginViewModel.verAlerta) {
+        AlertDialog(
+            onDismissRequest = { loginViewModel.cerrarAlerta() },
+            confirmButton = {
+                TextButton(onClick = { loginViewModel.cerrarAlerta() }) {
+                    Text(loginViewModel.textoBtnAlerta)
+                }
+            },
+            title = { Text(loginViewModel.tituloAlerta) },
+            text = { Text(loginViewModel.mensajeAlerta) }
+        )
     }
 }
