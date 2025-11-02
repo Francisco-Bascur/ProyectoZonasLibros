@@ -1,12 +1,14 @@
 package com.example.proyectozonaslibros.ui.login
 
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -21,10 +23,11 @@ import com.example.proyectozonaslibros.viewmodel.LoginViewModel
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
+    onLoginExitoso: (String) -> Unit,
     loginViewModel: LoginViewModel = viewModel()
 ) {
 
-    // sacamos los valores actuales para usarlos más fácil
+    // valores actuales del formulario desde el ViewModel
     val correoActual = loginViewModel.loginData.value.correo
     val claveActual = loginViewModel.loginData.value.contrasena
     val errorActual = loginViewModel.errorMensaje.value
@@ -45,7 +48,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
 
-        // --- Título principal ---
+        // Título
         Text(
             text = "Iniciar sesión",
             fontSize = 32.sp,
@@ -57,7 +60,7 @@ fun LoginScreen(
             color = Color.Black
         )
 
-        // --- Campo CORREO ---
+        // Campo Correo
         OutlinedTextField(
             value = correoActual,
             onValueChange = { loginViewModel.actualizarCorreo(it) },
@@ -67,7 +70,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- Campo CONTRASEÑA ---
+        // Campo Contraseña
         OutlinedTextField(
             value = claveActual,
             onValueChange = { loginViewModel.actualizarClave(it) },
@@ -78,14 +81,13 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- Mensaje de error (si hay) ---
+        // Mensaje de error si la validación falla
         if (errorActual.isNotEmpty()) {
             Text(
                 text = errorActual,
                 color = Color.Red,
                 fontSize = 14.sp,
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
 
@@ -94,13 +96,14 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // --- Botón de INICIO DE SESIÓN ---
+        // Botón Iniciar sesión
         Button(
             onClick = {
                 val ok = loginViewModel.validarLogin()
                 if (ok) {
-                    // Aquí va la acción cuando el login es válido.
-                    // En el siguiente avance: navegar a HomeScreen.
+                    onLoginExitoso(loginViewModel.loginData.value.correo)
+                    // Aquí más adelante vamos a navegar al Home
+                    // usando onLoginExitoso(correoActual)
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -113,7 +116,7 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- Botón de REGISTRO ---
+        // Botón Registrarse
         OutlinedButton(
             onClick = { onNavigateToRegister() },
             colors = ButtonDefaults.outlinedButtonColors(
@@ -125,4 +128,3 @@ fun LoginScreen(
         }
     }
 }
-

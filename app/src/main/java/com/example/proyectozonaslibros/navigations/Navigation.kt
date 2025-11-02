@@ -1,6 +1,8 @@
 package com.example.proyectozonaslibros.navigations
 
 
+import com.example.proyectozonaslibros.ui.login.home.HomeScreen
+
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -10,6 +12,7 @@ import com.example.proyectozonaslibros.ui.login.LoginScreen
 import com.example.proyectozonaslibros.ui.login.RegisterScreen
 
 @Composable
+
 fun Navigation() {
     val navController = rememberNavController()
 
@@ -17,28 +20,34 @@ fun Navigation() {
         navController = navController,
         startDestination = "login"
     ) {
-
-        // Pantalla de inicio de sesión
+        // Pantalla Login
         composable(route = "login") {
             LoginScreen(
                 onNavigateToRegister = {
                     navController.navigate("register")
+                },
+                onLoginExitoso = { correoUsuario ->
+                    navController.navigate("home/$correoUsuario")
                 }
             )
         }
 
-        // Pantalla de registro
+        // Pantalla Registro
         composable(route = "register") {
             RegisterScreen(
                 onVolverLogin = {
-                    // volver manualmente al login (botón "Volver al login")
                     navController.popBackStack()
                 },
                 onRegistroExitoso = {
-                    // volver automáticamente al login después de registro válido
                     navController.popBackStack()
                 }
             )
+        }
+
+        // Pantalla Home
+        composable(route = "home/{userEmail}") { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("userEmail") ?: ""
+            HomeScreen(userEmail = email)
         }
     }
 }
