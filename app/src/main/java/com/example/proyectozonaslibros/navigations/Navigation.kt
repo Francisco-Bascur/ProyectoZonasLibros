@@ -1,5 +1,7 @@
 package com.example.proyectozonaslibros.navigations
 
+
+
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,7 +17,9 @@ fun Navigation() {
         navController = navController,
         startDestination = "login"
     ) {
-        composable("login") {
+
+        // Pantalla de inicio de sesión
+        composable(route = "login") {
             LoginScreen(
                 onNavigateToRegister = {
                     navController.navigate("register")
@@ -23,9 +27,15 @@ fun Navigation() {
             )
         }
 
-        composable("register") {
+        // Pantalla de registro
+        composable(route = "register") {
             RegisterScreen(
-                onNavigateBack = {
+                onVolverLogin = {
+                    // volver manualmente al login (botón "Volver al login")
+                    navController.popBackStack()
+                },
+                onRegistroExitoso = {
+                    // volver automáticamente al login después de registro válido
                     navController.popBackStack()
                 }
             )

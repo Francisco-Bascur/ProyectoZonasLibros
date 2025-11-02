@@ -1,19 +1,22 @@
 package com.example.proyectozonaslibros.ui.login
+
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import com.example.proyectozonaslibros.viewmodel.LoginViewModel
-
 
 @Composable
 fun LoginScreen(
@@ -21,7 +24,11 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = viewModel()
 ) {
 
-    // Diseño de fondo con degradado
+    // sacamos los valores actuales para usarlos más fácil
+    val correoActual = loginViewModel.loginData.value.correo
+    val claveActual = loginViewModel.loginData.value.contrasena
+    val errorActual = loginViewModel.errorMensaje.value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,37 +51,58 @@ fun LoginScreen(
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(24.dp)
+                .padding(bottom = 24.dp)
                 .fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color.Black
         )
 
         // --- Campo CORREO ---
         OutlinedTextField(
-            value = loginViewModel.correo,
-            onValueChange = { loginViewModel.cambioCorreo(it) },
+            value = correoActual,
+            onValueChange = { loginViewModel.actualizarCorreo(it) },
             label = { Text("Correo") },
-            modifier = Modifier.fillMaxWidth(),
-            isError = loginViewModel.correo.isBlank()
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // --- Campo CONTRASEÑA ---
         OutlinedTextField(
-            value = loginViewModel.clave,
-            onValueChange = { loginViewModel.cambioClave(it) },
+            value = claveActual,
+            onValueChange = { loginViewModel.actualizarClave(it) },
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation(),
-            isError = loginViewModel.clave.isBlank()
+            visualTransformation = PasswordVisualTransformation()
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // --- Mensaje de error (si hay) ---
+        if (errorActual.isNotEmpty()) {
+            Text(
+                text = errorActual,
+                color = Color.Red,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+        } else {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         // --- Botón de INICIO DE SESIÓN ---
         Button(
-            onClick = { loginViewModel.validarLogin() },
+            onClick = {
+                val ok = loginViewModel.validarLogin()
+                if (ok) {
+                    // Aquí va la acción cuando el login es válido.
+                    // En el siguiente avance: navegar a HomeScreen.
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF3949AB)
@@ -96,18 +124,5 @@ fun LoginScreen(
             Text("Registrarse")
         }
     }
-
-    // --- ALERTA (POPUP) ---
-    if (loginViewModel.verAlerta) {
-        AlertDialog(
-            onDismissRequest = { loginViewModel.cerrarAlerta() },
-            confirmButton = {
-                TextButton(onClick = { loginViewModel.cerrarAlerta() }) {
-                    Text(loginViewModel.textoBtnAlerta)
-                }
-            },
-            title = { Text(loginViewModel.tituloAlerta) },
-            text = { Text(loginViewModel.mensajeAlerta) }
-        )
-    }
 }
+
