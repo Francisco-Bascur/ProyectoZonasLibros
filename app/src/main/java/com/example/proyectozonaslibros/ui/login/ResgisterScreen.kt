@@ -1,13 +1,17 @@
 package com.example.proyectozonaslibros.ui.login
 
 
-import androidx.compose.foundation.background
+
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -17,108 +21,199 @@ import com.example.proyectozonaslibros.viewmodel.RegisterViewModel
 
 @Composable
 fun RegisterScreen(
-    onVolverLogin: () -> Unit,
-    onRegistroExitoso: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     registerViewModel: RegisterViewModel = viewModel()
 ) {
+    val state = registerViewModel.uiState
+
+    // Si el registro fue exitoso, mostramos un AlertDialog "bonito"
+    if (state.registroExitoso) {
+        AlertDialog(
+            onDismissRequest = {
+                registerViewModel.limpiarMensaje()
+                onNavigateToLogin()
+            },
+            title = {
+                Text(
+                    text = "Cuenta creada",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            text = {
+                Text(
+                    text = "Tu cuenta se creó correctamente.\nAhora puedes iniciar sesión.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        registerViewModel.limpiarMensaje()
+                        onNavigateToLogin()
+                    }
+                ) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF3949AB),
-                        Color(0xFF5C6BC0),
-                        Color(0xFFE8EAF6)
-                    )
-                )
-            )
-            .padding(32.dp),
-        verticalArrangement = Arrangement.Center
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
             text = "Crear cuenta",
             fontSize = 28.sp,
-            color = Color.Black,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Campos de texto
+        // NOMBRE
         OutlinedTextField(
-            value = registerViewModel.nombre.value,
-            onValueChange = { registerViewModel.nombre.value = it },
+            value = state.nombre,
+            onValueChange = { registerViewModel.onNombreChange(it) },
             label = { Text("Nombre") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "icono nombre"
+                )
+            },
+            isError = state.nombreError != null,
             modifier = Modifier.fillMaxWidth()
         )
+        if (state.nombreError != null) {
+            Text(
+                text = state.nombreError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
+        // CORREO
         OutlinedTextField(
-            value = registerViewModel.correo.value,
-            onValueChange = { registerViewModel.correo.value = it },
+            value = state.correo,
+            onValueChange = { registerViewModel.onCorreoChange(it) },
             label = { Text("Correo") },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = "icono correo"
+                )
+            },
+            isError = state.correoError != null,
             modifier = Modifier.fillMaxWidth()
         )
+        if (state.correoError != null) {
+            Text(
+                text = state.correoError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
+        // CLAVE
         OutlinedTextField(
-            value = registerViewModel.clave.value,
-            onValueChange = { registerViewModel.clave.value = it },
+            value = state.clave,
+            onValueChange = { registerViewModel.onClaveChange(it) },
             label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "icono clave"
+                )
+            },
+            visualTransformation = PasswordVisualTransformation(),
+            isError = state.claveError != null,
+            modifier = Modifier.fillMaxWidth()
         )
+        if (state.claveError != null) {
+            Text(
+                text = state.claveError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
+        // CONFIRMAR CLAVE
         OutlinedTextField(
-            value = registerViewModel.confirmarClave.value,
-            onValueChange = { registerViewModel.confirmarClave.value = it },
+            value = state.confirmarClave,
+            onValueChange = { registerViewModel.onConfirmarClaveChange(it) },
             label = { Text("Confirmar contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "icono confirmar clave"
+                )
+            },
+            visualTransformation = PasswordVisualTransformation(),
+            isError = state.confirmarClaveError != null,
+            modifier = Modifier.fillMaxWidth()
         )
+        if (state.confirmarClaveError != null) {
+            Text(
+                text = state.confirmarClaveError ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Mensaje de error (si hay)
-        if (registerViewModel.errorMensaje.value.isNotEmpty()) {
+        // BOTÓN CREAR CUENTA
+        Button(
+            onClick = { registerViewModel.registrarUsuario() },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !state.registroExitoso // para no spamear después del éxito
+        ) {
+            Text("Crear cuenta")
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Mensaje general (error global del formulario)
+        if (state.mensajeGeneral.isNotEmpty() && !state.registroExitoso) {
             Text(
-                text = registerViewModel.errorMensaje.value,
-                color = Color.Red,
+                text = state.mensajeGeneral,
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 14.sp,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // Botón Crear cuenta
-        Button(
-            onClick = {
-                val ok = registerViewModel.validarRegistro()
-                if (ok) {
-                    onRegistroExitoso() // vuelve automáticamente al login
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3949AB))
-        ) {
-            Text("Crear cuenta")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedButton(
-            onClick = { onVolverLogin() },
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF3949AB)),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Volver al login")
+        // Botón volver a Login
+        TextButton(onClick = { onNavigateToLogin() }) {
+            Text("¿Ya tienes cuenta? Inicia sesión")
         }
     }
 }
+
