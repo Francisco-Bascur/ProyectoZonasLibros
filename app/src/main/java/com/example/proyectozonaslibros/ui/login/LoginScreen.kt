@@ -71,7 +71,7 @@ fun LoginScreen(
             },
             text = {
                 Text(
-                    text = "Inicio de sesión exitoso ✅",
+                    text = "Inicio de sesión exitoso ",
                     style = MaterialTheme.typography.bodyMedium
                 )
             },

@@ -41,7 +41,7 @@ fun RegisterScreen(
             },
             text = {
                 Text(
-                    text = "Tu cuenta se creó correctamente.\nAhora puedes iniciar sesión.",
+                    text = "Tu cuenta se creó correctame.",
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
@@ -212,7 +212,7 @@ fun RegisterScreen(
 
         // Botón volver a Login
         TextButton(onClick = { onNavigateToLogin() }) {
-            Text("¿Ya tienes cuenta? Inicia sesión")
+            Text("Iniciar sesión")
         }
     }
 }

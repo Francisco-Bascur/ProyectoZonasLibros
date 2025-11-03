@@ -1,6 +1,7 @@
 package com.example.proyectozonaslibros.navigations
 
 
+
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,7 +31,7 @@ fun navigation() {
             )
         }
 
-        // Pantalla Registro
+        //  Pantalla Registro
         composable(route = "register") {
             RegisterScreen(
                 onNavigateToLogin = {
@@ -40,10 +41,20 @@ fun navigation() {
             )
         }
 
-        // Pantalla Home
+        // 🔵 Pantalla Home con botón de Cerrar Sesión
         composable(route = "home/{userEmail}") { backStackEntry ->
             val email = backStackEntry.arguments?.getString("userEmail") ?: ""
-            HomeScreen(userEmail = email)
+
+            HomeScreen(
+                userEmail = email,
+                onLogout = {
+                    // vuelve al login y limpia la pila para evitar regresar al Home
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 }
