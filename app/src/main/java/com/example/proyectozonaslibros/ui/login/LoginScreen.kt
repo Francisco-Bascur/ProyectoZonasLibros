@@ -1,5 +1,8 @@
 package com.example.proyectozonaslibros.ui.login
 
+import android.os.VibrationEffect
+import android.os.Vibrator
+import androidx.core.content.getSystemService
 
 
 
@@ -35,6 +38,23 @@ fun LoginScreen(
     val state = loginViewModel.uiState
     val correoActual = state.correo
     val claveActual = state.contrasena
+    // recurso nativo vibracion error
+    @Suppress("MissingPermission")
+    fun vibrarError() {
+        val vibrator = context.getSystemService<Vibrator>() ?: return
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+            val effect = VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE)
+            vibrator.vibrate(effect)
+        } else {
+
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(200)
+        }
+    }
+
+
 
     // 🔔 Si login fue exitoso mostramos Dialog y navegamos cuando acepte
     if (state.loginExitoso) {
@@ -173,6 +193,8 @@ fun LoginScreen(
             onClick = {
                 loginViewModel.validarLogin()
                 if (!state.loginExitoso && state.errorGeneral.isNotEmpty()) {
+
+                    vibrarError()// vibra cuando hay error
                     Toast.makeText(context, state.errorGeneral, Toast.LENGTH_SHORT).show()
                 }
             },
