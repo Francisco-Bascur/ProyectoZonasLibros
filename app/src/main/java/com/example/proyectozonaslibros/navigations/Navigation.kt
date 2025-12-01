@@ -1,56 +1,54 @@
 package com.example.proyectozonaslibros.navigations
 
-
-
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
 import com.example.proyectozonaslibros.ui.home.HomeScreen
 import com.example.proyectozonaslibros.ui.login.LoginScreen
 import com.example.proyectozonaslibros.ui.login.RegisterScreen
 
 @Composable
-fun navigation() {
+fun Navigation() {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = "login"
-    ) {
 
+    )
+
+    {
         // Pantalla Login
         composable(route = "login") {
             LoginScreen(
+                // Navega a pantalla de registro
                 onNavigateToRegister = {
                     navController.navigate("register")
                 },
-                onLoginExitoso = { correoUsuario ->
-                    navController.navigate("home/$correoUsuario")
+                onLoginExitoso = {
+                    navController.navigate("home"){
+                        popUpTo("login"){inclusive = true}
+                    }
                 }
             )
         }
-
         //  Pantalla Registro
         composable(route = "register") {
             RegisterScreen(
                 onNavigateToLogin = {
-                    // vuelve al login después de crear cuenta
                     navController.popBackStack()
                 }
             )
         }
-
-        // 🔵 Pantalla Home con botón de Cerrar Sesión
-        composable(route = "home/{userEmail}") { backStackEntry ->
-            val email = backStackEntry.arguments?.getString("userEmail") ?: ""
-
-            HomeScreen(
-                userEmail = email,
+        //  Pantalla Home con botón de Cerrar Sesión
+        composable(route = "home"){
+        HomeScreen(
                 onLogout = {
-                    // vuelve al login y limpia la pila para evitar regresar al Home
+
                     navController.navigate("login") {
-                        popUpTo("login") { inclusive = false }
+                        popUpTo("login") { inclusive = true }
                         launchSingleTop = true
                     }
                 }

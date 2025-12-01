@@ -20,13 +20,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectozonaslibros.viewmodel.RegisterViewModel
 
 @Composable
+
+// funcion de navegacion register
 fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     registerViewModel: RegisterViewModel = viewModel()
 ) {
     val state = registerViewModel.uiState
 
-    // Si el registro fue exitoso, mostramos un AlertDialog "bonito"
+    // Si el registro fue exitoso, mostramos un AlertDialog
     if (state.registroExitoso) {
         AlertDialog(
             onDismissRequest = {
@@ -41,6 +43,7 @@ fun RegisterScreen(
             },
             text = {
                 Text(
+                    //  Texto informativo al crear cuenta
                     text = "Tu cuenta se creó correctame.",
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -57,7 +60,7 @@ fun RegisterScreen(
             }
         )
     }
-
+    // Columna principal centrada con padding general
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +68,7 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        //  Título principal de la pantalla Crear Cuenta
         Text(
             text = "Crear cuenta",
             fontSize = 28.sp,
@@ -76,7 +79,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // NOMBRE
+        //  CAMPO NOMBRE del usuario
         OutlinedTextField(
             value = state.nombre,
             onValueChange = { registerViewModel.onNombreChange(it) },
@@ -84,13 +87,16 @@ fun RegisterScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "icono nombre"
+                    contentDescription = "icono nombre" // icono
                 )
             },
             isError = state.nombreError != null,
             modifier = Modifier.fillMaxWidth()
         )
+
+        // Muestra el mensaje de error del nombre SOLO cuando existe un error
         if (state.nombreError != null) {
+            //  Error contextual del nombre
             Text(
                 text = state.nombreError ?: "",
                 color = MaterialTheme.colorScheme.error,
@@ -103,7 +109,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // CORREO
+        // CORREO electronico del usuario
         OutlinedTextField(
             value = state.correo,
             onValueChange = { registerViewModel.onCorreoChange(it) },
@@ -117,7 +123,10 @@ fun RegisterScreen(
             isError = state.correoError != null,
             modifier = Modifier.fillMaxWidth()
         )
+
+        // Muestra el mensaje de error del correo SOLO cuando existe un error
         if (state.correoError != null) {
+            // Error contextual del correo
             Text(
                 text = state.correoError ?: "",
                 color = MaterialTheme.colorScheme.error,
@@ -130,7 +139,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // CLAVE
+        // CAMPO contraseña del usuario
         OutlinedTextField(
             value = state.clave,
             onValueChange = { registerViewModel.onClaveChange(it) },
@@ -138,7 +147,7 @@ fun RegisterScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "icono clave"
+                    contentDescription = "icono clave" // icono
                 )
             },
             visualTransformation = PasswordVisualTransformation(),
@@ -146,6 +155,7 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth()
         )
         if (state.claveError != null) {
+            //  Error  de contraseña
             Text(
                 text = state.claveError ?: "",
                 color = MaterialTheme.colorScheme.error,
@@ -158,7 +168,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // CONFIRMAR CLAVE
+        // CAMPO CONFIRMAR contraseña
         OutlinedTextField(
             value = state.confirmarClave,
             onValueChange = { registerViewModel.onConfirmarClaveChange(it) },
@@ -166,7 +176,7 @@ fun RegisterScreen(
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "icono confirmar clave"
+                    contentDescription = "icono confirmar clave" // icono
                 )
             },
             visualTransformation = PasswordVisualTransformation(),
@@ -186,18 +196,18 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // BOTÓN CREAR CUENTA
+        // BOTÓN CREAR CUENTA , el ViewModel devuelve true si el registro es válido.
         Button(
             onClick = { registerViewModel.registrarUsuario() },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !state.registroExitoso // para no spamear después del éxito
+            enabled = !state.registroExitoso // evita clics después del éxito
         ) {
             Text("Crear cuenta")
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Mensaje general (error global del formulario)
+        //  Mensaje de error general del formulario (si existe)
         if (state.mensajeGeneral.isNotEmpty() && !state.registroExitoso) {
             Text(
                 text = state.mensajeGeneral,
@@ -210,7 +220,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Botón volver a Login
+        // Botón de accion  volver a Login
         TextButton(onClick = { onNavigateToLogin() }) {
             Text("Iniciar sesión")
         }

@@ -29,23 +29,24 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
-    userEmail: String,
+
     onLogout: () -> Unit // <- se  recibe desde navegación
 ) {
 
-    // animación de aparición del saludo
+    // Crea un estado local que controla si el saludo debe mostrarse (con animación).
+    //Comienza en false para que el alpha arranque en 0.
     var visible by remember { mutableStateOf(false) }
-
+   // aqui se ejecuta espera 300 miles segundos
     LaunchedEffect(Unit) {
         delay(300)
         visible = true
     }
-
+      // animacion saludos
     val alphaAnim by animateFloatAsState(
         targetValue = if (visible) 1f else 0f,
         animationSpec = tween(durationMillis = 6000)
     )
-
+// columna principal
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,7 +77,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Has iniciado sesión como:\n$userEmail",
+            text = "Has iniciado sesión",
             fontSize = 16.sp,
             color = Color.Black,
             textAlign = TextAlign.Center

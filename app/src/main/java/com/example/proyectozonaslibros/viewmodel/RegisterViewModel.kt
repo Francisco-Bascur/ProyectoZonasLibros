@@ -8,18 +8,22 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import com.example.proyectozonaslibros.storage.SessionManager
 
-// Estado completo del formulario de registro
+// Estado completo del formulario de registro.
+// Contiene campos ingresados por el usuario, errores por campo,
+// mensaje general y flag de éxito del registro.
 data class RegisterFormState(
     val nombre: String = "",
     val correo: String = "",
     val clave: String = "",
     val confirmarClave: String = "",
 
+    // Errores específicos para mostrar bajo cada TextField
     val nombreError: String? = null,
     val correoError: String? = null,
     val claveError: String? = null,
     val confirmarClaveError: String? = null,
 
+//  Mensaje general  - Revisa los campos o Cuenta creada
     val mensajeGeneral: String = "",
     val registroExitoso: Boolean = false
 )
@@ -37,7 +41,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     fun onNombreChange(nuevo: String) {
         uiState = uiState.copy(
             nombre = nuevo,
-            nombreError = null, // limpio el error cuando el usuario escribe
+            nombreError = null, // limpia el error cuando el usuario escribe
             mensajeGeneral = ""
         )
     }
@@ -66,7 +70,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-    // --- Validaciones individuales ---
+    // -Validaciones individuales -
     private fun validarNombre(): String? {
         return when {
             uiState.nombre.isBlank() -> "El nombre es obligatorio"
@@ -74,7 +78,9 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             else -> null
         }
     }
-
+    // ------------------------------------------------------------
+    // Validaciones internas (no se llaman desde la UI)
+    // Devuelven null si el campo es válido o un mensaje de error si no lo es.
     private fun validarCorreo(): String? {
         val patternCorreo = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
         return when {
@@ -101,14 +107,20 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     }
 
     // --- Acción principal: Registrar usuario ---
+    // Realiza TODA la lógica del flujo de registro:
+    // 1. Validar campos
+    // 2. Actualizar errores
+    // 3. Mostrar mensaje global si falla
+    // 4. Guardar usuario en SessionManager
+    // 5. Marcar registro como exitoso
     fun registrarUsuario() {
-        // Ejecutar todas las validaciones
+        // Ejecutar todas las validaciones individuales
         val nombreErr = validarNombre()
         val correoErr = validarCorreo()
         val claveErr = validarClave()
         val confirmarErr = validarConfirmarClave()
 
-        // Actualizar errores en el estado
+        //  Asignamos errores al estado para mostrarse en la UI
         uiState = uiState.copy(
             nombreError = nombreErr,
             correoError = correoErr,
@@ -116,7 +128,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             confirmarClaveError = confirmarErr
         )
 
-        // Si existe algún error, mostramos mensaje general y NO seguimos
+        // Si existe algún error, mostramos mensaje general y detenemos el proceso
         if (nombreErr != null || correoErr != null || claveErr != null || confirmarErr != null) {
             uiState = uiState.copy(
                 mensajeGeneral = "Revisa los campos marcados en rojo",
@@ -125,20 +137,20 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             return
         }
 
-        // ✅ Si todo está OK -> guardamos datos localmente (persistencia local requerida en rúbrica)
+        //  Si todos está OK guardamos datos localmente persistencia local
         sessionManager.guardarUsuario(
             correo = uiState.correo,
             contrasena = uiState.clave
         )
 
-        // Marcamos éxito
+        // registro exitoso  Alerta dialoj se mostrara en la pantalla
         uiState = uiState.copy(
-            mensajeGeneral = "Cuenta creada con éxito ✅",
+            mensajeGeneral = "Cuenta creada con éxito ",
             registroExitoso = true
         )
     }
 
-    // Para limpiar mensaje general cuando el usuario cierre el popup de éxito
+    // Para limpiar mensaje general cuando el usuario cierre el dialoj de éxito
     fun limpiarMensaje() {
         uiState = uiState.copy(mensajeGeneral = "")
     }
