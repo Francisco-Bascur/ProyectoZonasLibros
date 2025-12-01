@@ -9,8 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import com.example.proyectozonaslibros.storage.SessionManager
 
 // Estado completo del formulario de registro.
-// Contiene campos ingresados por el usuario, errores por campo,
-// mensaje general y flag de éxito del registro.
 data class RegisterFormState(
     val nombre: String = "",
     val correo: String = "",
@@ -33,15 +31,13 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     // SessionManager para guardar datos localmente (persistencia local)
     private val sessionManager = SessionManager(application)
 
-    // Estado observable por la UI
     var uiState by mutableStateOf(RegisterFormState())
         private set
 
-    // --- Actualizadores de campo (se llaman desde la UI) ---
     fun onNombreChange(nuevo: String) {
         uiState = uiState.copy(
             nombre = nuevo,
-            nombreError = null, // limpia el error cuando el usuario escribe
+            nombreError = null,
             mensajeGeneral = ""
         )
     }
@@ -70,23 +66,13 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         )
     }
 
-    // -Validaciones individuales -
-    private fun validarNombre(): String? {
-        return when {
-            uiState.nombre.isBlank() -> "El nombre es obligatorio"
-            uiState.nombre.length < 3 -> "Debe tener al menos 3 caracteres"
-            else -> null
-        }
-    }
-
-    // ------------------------------------------------------------
-    // Validaciones internas (no se llaman desde la UI)
-    // Devuelven null si el campo es válido o un mensaje de error si no lo es.
     private fun validarCorreo(): String? {
-        val patternCorreo = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$")
+        val correo = uiState.correo.trim()
+
         return when {
-            uiState.correo.isBlank() -> "El correo es obligatorio"
-            !patternCorreo.matches(uiState.correo) -> "Formato de correo no válido"
+            correo.isBlank() -> "El correo es obligatorio"
+            !correo.contains("@") -> "Debe incluir @"
+            !correo.contains(".") -> "Debe incluir un dominio válido"
             else -> null
         }
     }
@@ -107,30 +93,22 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // --- Acción principal: Registrar usuario ---
-    // Realiza TODA la lógica del flujo de registro:
-    // 1. Validar campos
-    // 2. Actualizar errores
-    // 3. Mostrar mensaje global si falla
-    // 4. Guardar usuario en SessionManager
-    // 5. Marcar registro como exitoso
     fun registrarUsuario() {
         // Ejecutar todas las validaciones individuales
-        val nombreErr = validarNombre()
+
         val correoErr = validarCorreo()
         val claveErr = validarClave()
         val confirmarErr = validarConfirmarClave()
 
         //  Asignamos errores al estado para mostrarse en la UI
         uiState = uiState.copy(
-            nombreError = nombreErr,
             correoError = correoErr,
             claveError = claveErr,
             confirmarClaveError = confirmarErr
         )
 
         // Si existe algún error, mostramos mensaje general y detenemos el proceso
-        if (nombreErr != null || correoErr != null || claveErr != null || confirmarErr != null) {
+        if (correoErr != null || claveErr != null || confirmarErr != null) {
             uiState = uiState.copy(
                 mensajeGeneral = "los Campos Son Obligatorios",
                 registroExitoso = false
@@ -144,17 +122,14 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             contrasena = uiState.clave
         )
 
-        // registro exitoso  Alerta dialoj se mostrara en la pantalla
         uiState = uiState.copy(
             mensajeGeneral = "Cuenta creada con éxito ",
             registroExitoso = true
         )
     }
 
-    // Para limpiar mensaje general cuando el usuario cierre el dialoj de éxito
     fun limpiarMensaje() {
         uiState = uiState.copy(
-            nombre = "",
             correo = "",
             clave = "",
             confirmarClave = "",

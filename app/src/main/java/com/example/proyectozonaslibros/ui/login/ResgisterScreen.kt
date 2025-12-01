@@ -56,29 +56,7 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        //  CAMPO NOMBRE del usuario
-        OutlinedTextField(
-            value = state.nombre,
-            onValueChange = { registerViewModel.onNombreChange(it) },
-            label = { Text("Nombre") },
-            isError = state.nombreError != null,
-            modifier = Modifier.fillMaxWidth()
-        )
 
-        // Muestra el mensaje de error del nombre SOLO cuando existe un error
-        if (state.nombreError != null) {
-            //  Error contextual del nombre
-            Text(
-                text = state.nombreError ?: "",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 4.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         // CORREO electronico del usuario
         OutlinedTextField(
