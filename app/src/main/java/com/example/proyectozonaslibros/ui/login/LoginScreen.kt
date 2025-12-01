@@ -3,6 +3,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 
+
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -17,41 +18,33 @@ import com.example.proyectozonaslibros.helper.ShowAlert
 import com.example.proyectozonaslibros.viewmodel.LoginViewModel
 
 @Composable
-
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onLoginExitoso: () -> Unit,
     loginViewModel: LoginViewModel = viewModel()
 ) {
-    //  se Accede al estado actual del ViewModel
-    val state = loginViewModel.uiState
+    val correo = loginViewModel.loginModel.correo
+    val contrasena = loginViewModel.loginModel.contrasena
 
-    // 🔹 Mostrar alerta cuando el login es exitoso
-    if (state.loginExitoso) {
+    // 🔹 ALERTA (errores o éxito)
+    if (loginViewModel.mostrarAlerta) {
         ShowAlert(
-            titulo = "Inicio de sesion exitoso!",
-            mensaje = "Bienvenido....",
-            textoBtnConfirmar = "Continuar",
+            titulo = loginViewModel.tituloAlerta,
+            mensaje = loginViewModel.mensajeAlerta,
+            textoBtnConfirmar = loginViewModel.textoBotonAlerta,
             onConfirm = {
-                loginViewModel.limpiarEstadoGeneral()
-                onLoginExitoso()   // NAVEGAR AL HOME
+                loginViewModel.descartarAlerta()
+
+                // Si las credenciales eran correctas → navegar al Home
+                if (loginViewModel.deberiamosNavegar) {
+                    onLoginExitoso()
+                    loginViewModel.cambiarEstadoNavegacion()
+                }
             }
         )
     }
 
-//  Mostrar alerta cuando haya un error general
-    if (state.errorGeneral.isNotEmpty()) {
-        ShowAlert(
-            titulo = "Error de inicio de sesión",
-            mensaje = state.errorGeneral,
-            textoBtnConfirmar = "Aceptar",
-            onConfirm = {
-                loginViewModel.limpiarEstadoGeneral()
-            },
-
-        )
-    }
-
+    // 🔹 UI LOGIN
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +53,6 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Text iniciar session
         Text(
             text = "Inicio sesión",
             fontSize = 32.sp,
@@ -72,31 +64,26 @@ fun LoginScreen(
             color = Color.Black
         )
 
-        // Campo Correo para ingresar correo
         OutlinedTextField(
-            value = state.correo,
-            onValueChange = { loginViewModel.actualizarCorreo(it) },
+            value = correo,
+            onValueChange = { loginViewModel.cambioCorreo(it) },
             label = { Text("Correo") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo Contraseña para ingresar la contraseña
         OutlinedTextField(
-            value = state.contrasena,
-            onValueChange = { loginViewModel.actualizarClave(it) },
+            value = contrasena,
+            onValueChange = { loginViewModel.cambioContrasena(it) },
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- Botón principal iniciar session
         Button(
-            onClick = {
-                loginViewModel.validarLogin()
-            },
+            onClick = { loginViewModel.auth() },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF3949AB)
@@ -105,10 +92,8 @@ fun LoginScreen(
             Text("Iniciar sesión")
         }
 
-
         Spacer(modifier = Modifier.height(24.dp))
 
-        // --- Botón Registrarse ---
         OutlinedButton(
             onClick = { onNavigateToRegister() },
             colors = ButtonDefaults.outlinedButtonColors(
@@ -120,4 +105,8 @@ fun LoginScreen(
         }
     }
 }
-// correcion de errores
+
+
+
+
+

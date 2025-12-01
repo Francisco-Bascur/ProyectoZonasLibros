@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                // Se inicia la navegación principal       Login - register - home
+                                 // Se inicia la navegación principal       Login - register - home
                 Navigation()
             }
         }
