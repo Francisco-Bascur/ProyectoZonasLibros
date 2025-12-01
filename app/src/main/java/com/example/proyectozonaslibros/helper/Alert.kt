@@ -11,18 +11,21 @@ import androidx.compose.runtime.Composable
 fun ShowAlert(
     titulo: String,
     mensaje: String,
-    textoBtnConfirmar: String,
+    textoBtnConfirmar: String = "Aceptar",
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+
 ) {
     AlertDialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = onConfirm,
         title = { Text(text = titulo) },
         text = { Text(text = mensaje) },
         confirmButton = {
             Button(onClick = onConfirm) {
                 Text(text = textoBtnConfirmar)
             }
-        }
+        },
+
+
+
     )
 }

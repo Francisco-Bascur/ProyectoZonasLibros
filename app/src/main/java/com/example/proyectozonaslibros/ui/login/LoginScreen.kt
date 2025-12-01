@@ -2,7 +2,6 @@ package com.example.proyectozonaslibros.ui.login
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.proyectozonaslibros.helper.ShowAlert
 import com.example.proyectozonaslibros.viewmodel.LoginViewModel
 
 @Composable
@@ -26,11 +26,30 @@ fun LoginScreen(
     //  se Accede al estado actual del ViewModel
     val state = loginViewModel.uiState
 
-    LaunchedEffect(state.loginExitoso) {
-        if (state.loginExitoso) {
-            onLoginExitoso()
-            loginViewModel.limpiarEstadoGeneral()
-        }
+    // 🔹 Mostrar alerta cuando el login es exitoso
+    if (state.loginExitoso) {
+        ShowAlert(
+            titulo = "Inicio de sesion exitoso!",
+            mensaje = "Bienvenido....",
+            textoBtnConfirmar = "Continuar",
+            onConfirm = {
+                loginViewModel.limpiarEstadoGeneral()
+                onLoginExitoso()   // NAVEGAR AL HOME
+            }
+        )
+    }
+
+//  Mostrar alerta cuando haya un error general
+    if (state.errorGeneral.isNotEmpty()) {
+        ShowAlert(
+            titulo = "Error de inicio de sesión",
+            mensaje = state.errorGeneral,
+            textoBtnConfirmar = "Aceptar",
+            onConfirm = {
+                loginViewModel.limpiarEstadoGeneral()
+            },
+
+        )
     }
 
     Column(
@@ -85,6 +104,8 @@ fun LoginScreen(
         ) {
             Text("Iniciar sesión")
         }
+
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // --- Botón Registrarse ---

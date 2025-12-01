@@ -33,10 +33,7 @@ fun RegisterScreen(
                 registerViewModel.limpiarMensaje()
                 onNavigateToLogin()
             },
-            onDismiss = {
-                registerViewModel.limpiarMensaje()
-                onNavigateToLogin()
-            }
+
         )
     }
 

@@ -117,7 +117,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         // Si hay errores de formulario, se deteiene el proceso
         if (correoErr != null || claveErr != null) {
             uiState = uiState.copy(
-                errorGeneral = "Revisa los campos marcados en rojo",
+                errorGeneral = "credenciales incorrectas",
                 loginExitoso = false
             )
             return
