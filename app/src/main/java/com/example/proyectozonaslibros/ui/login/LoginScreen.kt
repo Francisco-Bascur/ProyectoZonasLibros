@@ -2,6 +2,7 @@ package com.example.proyectozonaslibros.ui.login
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,13 @@ fun LoginScreen(
     //  se Accede al estado actual del ViewModel
     val state = loginViewModel.uiState
 
+    LaunchedEffect(state.loginExitoso) {
+        if (state.loginExitoso) {
+            onLoginExitoso()
+            loginViewModel.limpiarEstadoGeneral()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,7 +43,7 @@ fun LoginScreen(
 
         // Text iniciar session
         Text(
-            text = "Iniciar sesión",
+            text = "Inicio sesión",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -69,7 +77,6 @@ fun LoginScreen(
         Button(
             onClick = {
                 loginViewModel.validarLogin()
-                onLoginExitoso()
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(

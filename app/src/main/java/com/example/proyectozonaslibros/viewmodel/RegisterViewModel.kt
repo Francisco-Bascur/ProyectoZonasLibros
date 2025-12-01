@@ -78,6 +78,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             else -> null
         }
     }
+
     // ------------------------------------------------------------
     // Validaciones internas (no se llaman desde la UI)
     // Devuelven null si el campo es válido o un mensaje de error si no lo es.
@@ -131,7 +132,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         // Si existe algún error, mostramos mensaje general y detenemos el proceso
         if (nombreErr != null || correoErr != null || claveErr != null || confirmarErr != null) {
             uiState = uiState.copy(
-                mensajeGeneral = "Revisa los campos marcados en rojo",
+                mensajeGeneral = "los Campos Son Obligatorios",
                 registroExitoso = false
             )
             return
@@ -152,6 +153,18 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
     // Para limpiar mensaje general cuando el usuario cierre el dialoj de éxito
     fun limpiarMensaje() {
-        uiState = uiState.copy(mensajeGeneral = "")
+        uiState = uiState.copy(
+            nombre = "",
+            correo = "",
+            clave = "",
+            confirmarClave = "",
+            nombreError = null,
+            correoError = null,
+            claveError = null,
+            confirmarClaveError = null,
+            mensajeGeneral = "",
+            registroExitoso = false
+        )
     }
+
 }

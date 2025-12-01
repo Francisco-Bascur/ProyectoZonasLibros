@@ -1,15 +1,10 @@
 package com.example.proyectozonaslibros.ui.login
 
-
-
+import com.example.proyectozonaslibros.helper.ShowAlert
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,38 +23,23 @@ fun RegisterScreen(
 ) {
     val state = registerViewModel.uiState
 
-    // Si el registro fue exitoso, mostramos un AlertDialog
+    // Si el registro fue exitoso, mostramos un AlertDialog reutilizable
     if (state.registroExitoso) {
-        AlertDialog(
-            onDismissRequest = {
+        ShowAlert(
+            titulo = "Cuenta creada",
+            mensaje = "Tu cuenta se creó correctamente.",
+            textoBtnConfirmar = "Aceptar",
+            onConfirm = {
                 registerViewModel.limpiarMensaje()
                 onNavigateToLogin()
             },
-            title = {
-                Text(
-                    text = "Cuenta creada",
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
-            text = {
-                Text(
-                    //  Texto informativo al crear cuenta
-                    text = "Tu cuenta se creó correctame.",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        registerViewModel.limpiarMensaje()
-                        onNavigateToLogin()
-                    }
-                ) {
-                    Text("Aceptar")
-                }
+            onDismiss = {
+                registerViewModel.limpiarMensaje()
+                onNavigateToLogin()
             }
         )
     }
+
     // Columna principal centrada con padding general
     Column(
         modifier = Modifier
@@ -70,7 +50,7 @@ fun RegisterScreen(
     ) {
         //  Título principal de la pantalla Crear Cuenta
         Text(
-            text = "Crear cuenta",
+            text = "Registro Usuario",
             fontSize = 28.sp,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.fillMaxWidth(),
@@ -84,12 +64,6 @@ fun RegisterScreen(
             value = state.nombre,
             onValueChange = { registerViewModel.onNombreChange(it) },
             label = { Text("Nombre") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "icono nombre" // icono
-                )
-            },
             isError = state.nombreError != null,
             modifier = Modifier.fillMaxWidth()
         )
@@ -114,12 +88,6 @@ fun RegisterScreen(
             value = state.correo,
             onValueChange = { registerViewModel.onCorreoChange(it) },
             label = { Text("Correo") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = "icono correo"
-                )
-            },
             isError = state.correoError != null,
             modifier = Modifier.fillMaxWidth()
         )
@@ -144,12 +112,6 @@ fun RegisterScreen(
             value = state.clave,
             onValueChange = { registerViewModel.onClaveChange(it) },
             label = { Text("Contraseña") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = "icono clave" // icono
-                )
-            },
             visualTransformation = PasswordVisualTransformation(),
             isError = state.claveError != null,
             modifier = Modifier.fillMaxWidth()
@@ -165,7 +127,6 @@ fun RegisterScreen(
                     .padding(top = 4.dp)
             )
         }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         // CAMPO CONFIRMAR contraseña
@@ -173,12 +134,6 @@ fun RegisterScreen(
             value = state.confirmarClave,
             onValueChange = { registerViewModel.onConfirmarClaveChange(it) },
             label = { Text("Confirmar contraseña") },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = "icono confirmar clave" // icono
-                )
-            },
             visualTransformation = PasswordVisualTransformation(),
             isError = state.confirmarClaveError != null,
             modifier = Modifier.fillMaxWidth()
@@ -222,7 +177,7 @@ fun RegisterScreen(
 
         // Botón de accion  volver a Login
         TextButton(onClick = { onNavigateToLogin() }) {
-            Text("Iniciar sesión")
+            Text("volver")
         }
     }
 }

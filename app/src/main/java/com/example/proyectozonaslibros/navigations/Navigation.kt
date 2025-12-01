@@ -17,9 +17,8 @@ fun Navigation() {
         navController = navController,
         startDestination = "login"
 
-    )
+    ){
 
-    {
         // Pantalla Login
         composable(route = "login") {
             LoginScreen(

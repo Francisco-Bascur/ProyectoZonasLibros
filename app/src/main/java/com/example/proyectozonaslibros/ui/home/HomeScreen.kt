@@ -66,7 +66,7 @@ fun HomeScreen(
 
         // ----- saludo -----
         Text(
-            text = "Bienvenido 👋",
+            text = "Bienvenido ",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
