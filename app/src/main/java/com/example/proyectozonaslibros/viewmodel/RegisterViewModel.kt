@@ -1,6 +1,4 @@
 package com.example.proyectozonaslibros.viewmodel
-
-
 import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,13 +8,11 @@ import com.example.proyectozonaslibros.storage.SessionManager
 
 // Estado completo del formulario de registro.
 data class RegisterFormState(
-    val nombre: String = "",
     val correo: String = "",
     val clave: String = "",
     val confirmarClave: String = "",
 
     // Errores específicos para mostrar bajo cada TextField
-    val nombreError: String? = null,
     val correoError: String? = null,
     val claveError: String? = null,
     val confirmarClaveError: String? = null,
@@ -25,7 +21,6 @@ data class RegisterFormState(
     val mensajeGeneral: String = "",
     val registroExitoso: Boolean = false
 )
-
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
 
     // SessionManager para guardar datos localmente (persistencia local)
@@ -33,14 +28,6 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
     var uiState by mutableStateOf(RegisterFormState())
         private set
-
-    fun onNombreChange(nuevo: String) {
-        uiState = uiState.copy(
-            nombre = nuevo,
-            nombreError = null,
-            mensajeGeneral = ""
-        )
-    }
 
     fun onCorreoChange(nuevo: String) {
         uiState = uiState.copy(
@@ -72,19 +59,16 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         return when {
             correo.isBlank() -> "El correo es obligatorio"
             !correo.contains("@") -> "Debe incluir @"
-            !correo.contains(".") -> "Debe incluir un dominio válido"
             else -> null
         }
     }
-
     private fun validarClave(): String? {
         return when {
             uiState.clave.isBlank() -> "La contraseña es obligatoria"
-            uiState.clave.length < 6 -> "Debe tener mínimo 6 caracteres"
+            uiState.clave.length < 4 -> "Debe tener mínimo 4 caracteres"
             else -> null
         }
     }
-
     private fun validarConfirmarClave(): String? {
         return when {
             uiState.confirmarClave.isBlank() -> "Debes repetir la contraseña"
@@ -95,11 +79,9 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
     fun registrarUsuario() {
         // Ejecutar todas las validaciones individuales
-
         val correoErr = validarCorreo()
         val claveErr = validarClave()
         val confirmarErr = validarConfirmarClave()
-
         //  Asignamos errores al estado para mostrarse en la UI
         uiState = uiState.copy(
             correoError = correoErr,
@@ -115,25 +97,21 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             )
             return
         }
-
         //  Si todos está OK guardamos datos localmente persistencia local
         sessionManager.guardarUsuario(
             correo = uiState.correo,
             contrasena = uiState.clave
         )
-
         uiState = uiState.copy(
-            mensajeGeneral = "Cuenta creada con éxito ",
+            mensajeGeneral = "Cuenta creada ! ",
             registroExitoso = true
         )
     }
-
     fun limpiarMensaje() {
         uiState = uiState.copy(
             correo = "",
             clave = "",
             confirmarClave = "",
-            nombreError = null,
             correoError = null,
             claveError = null,
             confirmarClaveError = null,
