@@ -1,3 +1,4 @@
+package com.example.proyectozonaslibros.ui.home
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -25,89 +26,130 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.proyectozonaslibros.R
-
 import com.example.proyectozonaslibros.viewmodel.LibroViewModel
-
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navController: NavHostController,
     onLogout: () -> Unit,
-    viewModel: LibroViewModel = viewModel()
+    libroViewModel: LibroViewModel = viewModel()
 ) {
+    val state = libroViewModel.state
 
-    val state = viewModel.state
+    var visible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        visible = true
+    }
+
+    val alphaAnim by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 800)
+    )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Zonas Libros") },
+                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+                title = { Text(text = "Zonas Libros") },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menú")
+                    IconButton(onClick = { /* aquí podrías abrir menú lateral */ }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menú"
+                        )
                     }
                 },
                 actions = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "Más opciones")
+                    IconButton(onClick = { /* menú de opciones, logs, etc. */ }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Más opciones"
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF673AB7), // Morado como el profe
+                    containerColor = Color(0xFF673AB7),       // morado estilo profe
                     titleContentColor = Color.White,
                     navigationIconContentColor = Color.White,
                     actionIconContentColor = Color.White
                 )
             )
         }
-    ) { paddingValues ->
+    ) { innerPadding ->
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(
-                    Brush.verticalGradient(
+                    brush = Brush.verticalGradient(
                         colors = listOf(
                             Color(0xFFBBDEFB),
                             Color(0xFFE3F2FD)
                         )
                     )
                 )
-                .padding(16.dp)
+                .padding(innerPadding)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Título
+
+            // ---- Cabecera bienvenida ----
             Text(
-                "Bienvenido",
-                fontSize = 30.sp,
+                text = "Bienvenido",
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .alpha(alphaAnim)
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Has iniciado sesión",
+                fontSize = 14.sp,
+                color = Color.Black,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Text(
-                "Has iniciado sesión",
-                fontSize = 16.sp,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                "Libros disponibles",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
+                text = "Libros disponibles",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 4.dp, bottom = 8.dp)
             )
 
-            Spacer(Modifier.height(8.dp))
+            // ---- Botón para ir a Agregar Libro ----
+            Button(
+                onClick = { navController.navigate("agregarLibro") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            ) {
+                Text("Agregar libro")
+            }
 
+            // ---- Lista de libros (CRUD local) ----
             LazyColumn(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
                 items(state.libros) { libro ->
-
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -118,46 +160,70 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(8.dp)
                         ) {
+
+                            // Imagen demo (puedes cambiar por tu ícono de libro)
                             Image(
                                 painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                                contentDescription = "Libro",
-                                modifier = Modifier.size(60.dp)
+                                contentDescription = "Portada libro",
+                                modifier = Modifier
+                                    .height(60.dp)
+                                    .width(60.dp)
                             )
 
-                            Spacer(Modifier.width(16.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
 
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text("Título: ${libro.titulo}")
-                                Text("Autor: ${libro.autor}")
-                                Text("Categoría: ${libro.categoria}")
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(text = "Título: ${libro.titulo}")
+                                Text(text = "Autor: ${libro.autor}")
+                                Text(text = "Categoría: ${libro.categoria}")
                             }
 
-                            IconButton(onClick = {}) {
-                                Icon(Icons.Default.Edit, contentDescription = "Editar")
-                            }
-
-                            IconButton(onClick = {}) {
-                                Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+                            Row {
+                                IconButton(onClick = {
+                                    libroViewModel.seleccionarLibroParaEditar(libro)
+                                    navController.navigate("editarLibro")
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = "Editar"
+                                    )
+                                }
+                                IconButton(onClick = {
+                                    libroViewModel.eliminarLibro(libro.id)
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Eliminar"
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
 
-            Spacer(Modifier.height(12.dp))
-
+            // ---- Botón Cerrar sesión ----
             Button(
                 onClick = { onLogout() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF3949AB),
+                    contentColor = Color.White
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF3949AB)
-                ),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Cerrar sesión", color = Color.White)
+                Text(
+                    text = "Cerrar sesión",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
