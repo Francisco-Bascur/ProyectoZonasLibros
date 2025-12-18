@@ -10,7 +10,7 @@ import com.example.proyectozonaslibros.storage.SessionManager
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
-    // 🔹 MODELO PRINCIPAL (correo y contraseña)
+    //  MODELO PRINCIPAL (correo y contraseña)
     var loginModel by mutableStateOf(LoginModel(correo = "", contrasena = ""))
         private set
 
@@ -22,7 +22,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         loginModel = loginModel.copy(contrasena = nuevo)
     }
 
-    // 🔹 ALERTA
+    //  ALERTA
     var mostrarAlerta by mutableStateOf(false)
         private set
     var tituloAlerta by mutableStateOf("")
@@ -36,7 +36,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         mostrarAlerta = false
     }
 
-    // 🔹 NAVEGACIÓN AL HOME
+    //  NAVEGACIÓN AL HOME
     var deberiamosNavegar by mutableStateOf(false)
         private set
 
@@ -44,7 +44,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         deberiamosNavegar = false
     }
 
-    // 🔹 PERSISTENCIA LOCAL
+    //  PERSISTENCIA LOCAL
     private val sessionManager = SessionManager(application)
 
     // LÓGICA DE LOGIN

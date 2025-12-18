@@ -1,5 +1,7 @@
 package com.example.proyectozonaslibros.ui.home
 
+
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -32,6 +34,7 @@ import com.example.proyectozonaslibros.viewmodel.LibroViewModel
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +70,12 @@ fun HomeScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { navController.navigate("camara") }) {
+                        Icon(
+                            imageVector = Icons.Filled.CameraAlt,
+                            contentDescription = "Abrir cámara"
+                        )
+                    }
                     IconButton(onClick = { /* menú de opciones, logs, etc. */ }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,

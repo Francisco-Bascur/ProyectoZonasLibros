@@ -77,6 +77,7 @@ dependencies {
 
 
     implementation("androidx.compose.material:material:1.4.3")
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")
 
 
     implementation("androidx.camera:camera-camera2:1.3.0")

@@ -45,7 +45,7 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //  Título principal de la pantalla Crear Cuenta
+        //  Título principal pantalla Crear Cuenta
         Text(
             text = "Registro Usuario",
             fontSize = 28.sp,

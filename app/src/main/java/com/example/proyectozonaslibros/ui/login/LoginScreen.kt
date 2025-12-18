@@ -1,15 +1,16 @@
 package com.example.proyectozonaslibros.ui.login
+import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-
-
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -17,6 +18,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectozonaslibros.helper.ShowAlert
 import com.example.proyectozonaslibros.viewmodel.LoginViewModel
 
+
+
+
+fun vibrar(context: Context) {
+    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val efecto = VibrationEffect.createOneShot(
+            500, // duración
+            VibrationEffect.DEFAULT_AMPLITUDE
+        )
+        vibrator.vibrate(efecto)
+    } else {
+        @Suppress("DEPRECATION")
+        vibrator.vibrate(500)
+    }
+}
 @Composable
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
@@ -25,9 +42,16 @@ fun LoginScreen(
 ) {
     val correo = loginViewModel.loginModel.correo
     val contrasena = loginViewModel.loginModel.contrasena
-
-    // 🔹 ALERTA (errores o éxito)
+    // Contexto para poder llamar a vibrar()
+    val context = LocalContext.current
+    // alerta
     if (loginViewModel.mostrarAlerta) {
+
+        //  Si hay alerta y NO debemos navegar → credenciales incorrectas → vibrar
+        if (!loginViewModel.deberiamosNavegar) {
+            vibrar(context)
+        }
+
         ShowAlert(
             titulo = loginViewModel.tituloAlerta,
             mensaje = loginViewModel.mensajeAlerta,
@@ -67,7 +91,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = correo,
             onValueChange = { loginViewModel.cambioCorreo(it) },
-            label = { Text("Correo") },
+            label = { Text("Correo...") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -76,7 +100,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = contrasena,
             onValueChange = { loginViewModel.cambioContrasena(it) },
-            label = { Text("Contraseña") },
+            label = { Text("Contraseña..") },
             modifier = Modifier.fillMaxWidth()
         )
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.proyectozonaslibros.ui.camera.CamaraScreen
 import com.example.proyectozonaslibros.ui.home.AgregarLibroScreen
 import com.example.proyectozonaslibros.ui.home.EditarLibroScreen
 import com.example.proyectozonaslibros.ui.home.HomeScreen
@@ -76,6 +77,8 @@ fun Navigation() {
             )
         }
 
-
+        composable ("camara"){
+            CamaraScreen()
+        }
     }
 }
